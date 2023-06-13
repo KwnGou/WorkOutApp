@@ -1,0 +1,51 @@
+﻿@inject HttpClient Http
+@inject DialogService DialogSvc
+@inject NotificationService NotificationSvc
+
+<RadzenTemplateForm TItem="Schedule_DailyExercise_ItemDTO" Data="@DTO" >
+    <div class="row">
+        <div class="col-md-3 col-sm-12">
+            Date (*):
+        </div>
+        <div class="col-md-9 col-sm-12">
+            <RadzenDatePicker AllowClear="@true" AllowInput="@true" DateFormat="dd-MM-yyyy"
+                              @bind-Value="@DTO.Date" Min="@MinDate" Max="@MaxDate" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3 col-sm-12">
+            Exercise (*):
+        </div>
+        <div class="col-md-9 col-sm-12">
+            <RadzenDropDown TValue="int" Data="@Exercises" ValueProperty="@(nameof(Exercise_GridDTO.Id))" TextProperty="@(nameof(Exercise_GridDTO.Name))"
+            @bind-Value="@DTO.ExerciseId" />
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-12 d-flex align-items-end justify-content-center" style="margin-top: 16px;">
+            <RadzenButton ButtonType="ButtonType.Button" Icon="save" Text="Save" Click="@AddItem" />
+            <RadzenButton ButtonStyle="ButtonStyle.Light" Icon="cancel" style="display: inline-block; margin-left: 10px;" Text="Cancel"
+                          Click="@((args) => DialogSvc.Close(false))" />
+        </div>
+    </div>
+</RadzenTemplateForm>
+
+@code {
+    [Parameter]
+    public Schedule_DailyExercise_ItemDTO DTO { get; set; }
+
+    [Parameter]
+    public Exercise_GridDTO[] Exercises { get; set; }
+
+    [Parameter]
+    public DateTime MinDate { get; set; }
+
+    [Parameter]
+    public DateTime MaxDate { get; set; }
+
+    private void AddItem()
+    {
+        DTO.ExerciseName = Exercises.First(e => e.Id == DTO.ExerciseId).Name;
+        DialogSvc.Close(DTO);
+    }
+}

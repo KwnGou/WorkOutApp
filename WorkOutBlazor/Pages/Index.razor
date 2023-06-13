@@ -1,0 +1,139 @@
+﻿@page "/"
+@inject HttpClient Http
+@inject DialogService DialogSvc
+@inject NotificationService NotificationSvc
+
+
+
+<PageTitle>Schedules</PageTitle>
+
+<h1>Welcome to my WorkOutApp !</h1>
+
+The following Grid contains the existing schedules.
+
+@if (schedules == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+
+    <RadzenDataGrid @ref="@grid" AllowSorting="@true" AllowColumnResize="@true" PageSize="5" AllowPaging="@true" PagerHorizontalAlign="HorizontalAlign.Center"
+                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterMode="FilterMode.Simple" Data="@schedules"
+                TItem="Schedule_DetailsDTO"  ExpandMode="DataGridExpandMode.Single">
+        <Template Context="dto">
+            <RadzenDataGrid TItem="Schedule_DailyExercise_ItemDTO" Data="dto.Exercises" AllowColumnResize="@true" AllowSorting="@true" AllowFiltering="@false">
+                <Columns>
+                    <RadzenDataGridColumn TItem="Schedule_DailyExercise_ItemDTO" Property="@(nameof(Schedule_DailyExercise_ItemDTO.Date))" Title="Date"
+                                      FormatString="{0:d MMM yy}"/>
+                    <RadzenDataGridColumn TItem="Schedule_DailyExercise_ItemDTO" Property="@(nameof(Schedule_DailyExercise_ItemDTO.ExerciseName))" Title="Exercise" />
+                </Columns>
+            </RadzenDataGrid>
+        </Template>
+        <Columns>
+            <RadzenDataGridColumn TItem="Schedule_DetailsDTO" Title="Start Date" TextAlign="TextAlign.Center" Filterable="false" Property="@(nameof(Schedule_DetailsDTO.StartDate))"
+                              FormatString="{0:d MMM yy}" Width="35%"/>
+            <RadzenDataGridColumn TItem="Schedule_DetailsDTO" Title="End Date" TextAlign="TextAlign.Center" Filterable="false" Property="@(nameof(Schedule_DetailsDTO.EndDate))"
+                              FormatString="{0:d MMM yy}" Width="35%"/>
+            <RadzenDataGridColumn TItem="Schedule_DetailsDTO" Filterable="@false" Sortable="@false" Width="80px" TextAlign="TextAlign.Center">
+                <Template Context="dto">
+                    <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Primary" Click="@(async (args) => await Edit(dto))" />
+                </Template>
+
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Schedule_DetailsDTO" Filterable="@false" Sortable="@false" Width="80px" TextAlign="TextAlign.Center">
+                <Template Context="dto">
+                    <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Click="@(async (args) => await Delete(dto))" />
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+    <br />
+    <RadzenButton Icon="add_circle_outline" Text="Add New Schedule" ButtonStyle="ButtonStyle.Success" Click="@(async (args) => Add(exercises))" />
+}
+
+@code
+{
+    //private Category_GridDTO[] categories;
+    private Exercise_GridDTO[] exercises;
+    private Schedule_DetailsDTO[] schedules;
+    private RadzenDataGrid<Schedule_DetailsDTO> grid;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        schedules = await Http.GetFromJsonAsync<Schedule_DetailsDTO[]>("api/Schedules");
+        //categories = await Http.GetFromJsonAsync<Category_GridDTO[]>("api/Categories");
+        exercises = await Http.GetFromJsonAsync<Exercise_GridDTO[]>("api/Exercises");
+    }
+
+    private async Task Delete(Schedule_DetailsDTO dto)
+    {
+        var res = await Http.DeleteAsync($"api/Schedules/{dto.Id}");
+
+        if (!res.IsSuccessStatusCode)
+        {
+            NotificationSvc.Notify(
+                NotificationSeverity.Error,
+                "Deletion failed",
+                await res.Content.ReadAsStringAsync(),
+                8000);
+        }
+        else
+        {
+            schedules = await Http.GetFromJsonAsync<Schedule_DetailsDTO[]>("api/Schedules");
+            StateHasChanged();
+        }
+
+    }
+
+    private async Task Edit(Schedule_DetailsDTO dto)
+    {
+        var dlgParams = new Dictionary<string, object>
+        {
+            { "DTO", dto },
+            { "IsNew", false },
+            { "Exercises", exercises }
+        };
+
+        var result = await DialogSvc.OpenAsync<Dlg_Schedule_Edit>(
+            "Edit Schedule",
+            dlgParams,
+            new DialogOptions { Width = "600px" });
+
+        bool? bResult = result as bool?;
+
+        if (bResult.HasValue && bResult.Value)
+        {
+            schedules = await Http.GetFromJsonAsync<Schedule_DetailsDTO[]>("api/Schedules");
+            StateHasChanged();
+        }
+
+    }
+    private async Task Add(Exercise_GridDTO[] exercises)
+    {
+        var newEntry = new Schedule_DetailsDTO { StartDate = DateTime.Today.AddDays(1), EndDate = DateTime.Today.AddDays(8), 
+            Exercises=new List<Schedule_DailyExercise_ItemDTO>() };
+
+        var dlgParams = new Dictionary<string, object>
+        {
+            { "DTO", newEntry },
+            { "IsNew", true },
+            { "Exercises", exercises }
+        };
+
+        var result = await DialogSvc.OpenAsync<Dlg_Schedule_Edit>(
+            "Add Schedule",
+            dlgParams,
+            new DialogOptions { Width = "600px" });
+
+        bool? bResult = result as bool?;
+
+        if (bResult.HasValue && bResult.Value)
+        {
+            schedules = await Http.GetFromJsonAsync<Schedule_DetailsDTO[]>("api/Schedules");
+            StateHasChanged();
+        }
+    }
+}
+

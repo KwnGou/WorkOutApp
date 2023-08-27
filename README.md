@@ -16,3 +16,18 @@ This is my first REST API app with blazor front end.
 4. In a separate CMD line, run the following:
     1. `cd WorkOutBlazor`
     2. `dotnet run .\WorkOutBlazor.csproj`
+
+### Screenshots:
+
+Schedules grid with inline edit and delete functions.
+
+![image](https://github.com/KwnGou/WorkOutApp/assets/110529457/4e831b3c-c25a-43bb-8d5c-d4570d900b0f)
+
+Schedule creation pop ups.
+
+![image](https://github.com/KwnGou/WorkOutApp/assets/110529457/f4bcefae-d8be-4309-8092-698bad70da44)
+![image](https://github.com/KwnGou/WorkOutApp/assets/110529457/f0bd6e5d-2327-45c6-b27f-197f5ef7e6a6)
+
+ Exercises grid with inline edit , delete and create functions.
+
+![image](https://github.com/KwnGou/WorkOutApp/assets/110529457/7ce31d5c-922d-44bd-be9f-76881b27fb18)

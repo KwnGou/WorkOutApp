@@ -21,7 +21,7 @@ Schedules grid with inline edit and delete functions.
 
 ![image](https://github.com/KwnGou/WorkOutApp/assets/110529457/4e831b3c-c25a-43bb-8d5c-d4570d900b0f)
 
-Schedule creation pop ups.
+Schedule creation dialogue.
 
 ![image](https://github.com/KwnGou/WorkOutApp/assets/110529457/f4bcefae-d8be-4309-8092-698bad70da44)
 ![image](https://github.com/KwnGou/WorkOutApp/assets/110529457/f0bd6e5d-2327-45c6-b27f-197f5ef7e6a6)

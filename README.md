@@ -1,5 +1,3 @@
-This is my first REST API app with blazor front end.
-
 ### Required Resources:
 1. [SDK .net 6](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
 2. [SQL Server Developer Edition](https://www.microsoft.com/en-us/sql-server/sql-server-downloads)

@@ -1,5 +1,7 @@
 WorkOutApp is a Single Page Application using Radzen component library for the UI and  Microsoft SQL Database for Data storage.
+
 It was created using Microsoft Visual Studio and Microsoft SQL Server Management Studio.
+
 The application function is to oganize you exercises and create your workout schedule. 
 
 ### Required Resources:
